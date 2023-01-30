@@ -3,27 +3,33 @@ namespace BattleTechModPathLinker;
 
 public class Program
 {
-
+    private static bool _subFoldersOnly = false;
+    private static bool _hasTwoArgs = false;
+    private static string[] _directoryPaths = new string[2];
     public static void Main(string[] args)
     {
-        bool hasTwoArgs = args.Length >= 2;
+        SubFoldersOnly(args);
+        DirectoryPaths(args);
         Console.WriteLine("Hello, World!");
-        switch (hasTwoArgs)
+        if (_hasTwoArgs)
         {
-            case true:
+            Console.WriteLine("Directory 1 is: " + _directoryPaths[0]);
+            Console.WriteLine("Directory 2 is: " + _directoryPaths[1]);
+            if (_subFoldersOnly)
             {
-                string[] basePath = Directory.GetDirectories(args[1]);
-
-                foreach (var dir in basePath)
+                string[] BaseDir = Directory.GetDirectories(_directoryPaths[1]);
+                foreach (var dir in BaseDir)
                 {
-                    MakeSymbolicLinks(args[0],dir);
-                    Console.WriteLine(dir);
+                    MakeDirectorySymbolicLinks(_directoryPaths[0],dir);  
                 }
             }
-                break;
+            else
+            {
+                MakeDirectorySymbolicLinks(_directoryPaths[0],_directoryPaths[1]);
+            }
         }
     }
-    private static void MakeSymbolicLinks(string destination, string source)
+    private static void MakeDirectorySymbolicLinks(string destination, string source)
     {
         try
         {
@@ -40,6 +46,35 @@ public class Program
         catch (IOException e)
         {
             Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void SubFoldersOnly(string[] args)
+    {
+        foreach (var arg in args)
+        {
+            if (arg == "--S")
+            {
+              _subFoldersOnly = true;
+            }
+        }
+    }
+
+    private static void DirectoryPaths(string[] args)
+    {
+        int numFound = 0;
+        foreach (var arg in args)
+        {
+            if (Directory.Exists(arg) && _hasTwoArgs == false)
+            {
+                _directoryPaths[numFound] = arg;
+                numFound++;
+            }
+
+            if (numFound == 2)
+            {
+                _hasTwoArgs = true;
+            }
         }
     }
 }
