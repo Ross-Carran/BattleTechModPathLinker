@@ -10,7 +10,6 @@ public class Program
     {
         SubFoldersOnly(args);
         DirectoryPaths(args);
-        Console.WriteLine("Hello, World!");
         if (_hasTwoArgs)
         {
             Console.WriteLine("Directory 1 is: " + _directoryPaths[0]);
