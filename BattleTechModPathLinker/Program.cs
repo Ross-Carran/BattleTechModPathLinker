@@ -3,20 +3,30 @@ namespace BattleTechModPathLinker;
 
 public class Program
 {
+    private static bool _filesOnly = false;
     private static bool _subFoldersOnly = false;
     private static bool _hasTwoArgs = false;
     private static string[] _directoryPaths = new string[2];
     public static void Main(string[] args)
     {
+        FilesOnly(args);
         SubFoldersOnly(args);
         DirectoryPaths(args);
-        if (_hasTwoArgs)
+        if (_hasTwoArgs && !(_subFoldersOnly && _filesOnly))
         {
             Console.WriteLine("Directory 1 is: " + _directoryPaths[0]);
             Console.WriteLine("Directory 2 is: " + _directoryPaths[1]);
             if (_subFoldersOnly)
             {
                 string[] BaseDir = Directory.GetDirectories(_directoryPaths[1]);
+                foreach (var dir in BaseDir)
+                {
+                    MakeDirectorySymbolicLinks(_directoryPaths[0],dir);  
+                }
+            }
+            else if (_filesOnly)
+            {
+                string[] BaseDir = Directory.GetFiles(_directoryPaths[1]);
                 foreach (var dir in BaseDir)
                 {
                     MakeDirectorySymbolicLinks(_directoryPaths[0],dir);  
@@ -55,6 +65,17 @@ public class Program
             if (arg == "--S")
             {
               _subFoldersOnly = true;
+            }
+        }
+    }
+
+    private static void FilesOnly(string[] args)
+    {
+        foreach (var arg in args)
+        {
+            if (arg == "--F")
+            {
+                _filesOnly = true;
             }
         }
     }
