@@ -41,7 +41,9 @@ public class Program
 
             if (_modsDirectory && !(_subFoldersOnly || _filesOnly))
             {
-                Directory.Move(args[0] + Path.DirectorySeparatorChar + new DirectoryInfo(args[1]).Name, args[0] + Path.DirectorySeparatorChar + "Mods");
+                string dirName = "Mods";
+                Directory.Move(args[0] + Path.DirectorySeparatorChar + new DirectoryInfo(args[1]).Name,
+                    args[0] + Path.DirectorySeparatorChar + dirName);
             }
         }
     }
