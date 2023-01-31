@@ -3,6 +3,7 @@ namespace BattleTechModPathLinker;
 
 public class Program
 {
+    private static bool _modsDirectory = false;
     private static bool _filesOnly = false;
     private static bool _subFoldersOnly = false;
     private static bool _hasTwoArgs = false;
@@ -12,6 +13,7 @@ public class Program
         FilesOnly(args);
         SubFoldersOnly(args);
         DirectoryPaths(args);
+        ModsDirectory(args);
         if (_hasTwoArgs && !(_subFoldersOnly && _filesOnly))
         {
             Console.WriteLine("Directory 1 is: " + _directoryPaths[0]);
@@ -35,6 +37,11 @@ public class Program
             else
             {
                 MakeDirectorySymbolicLinks(_directoryPaths[0],_directoryPaths[1]);
+            }
+
+            if (_modsDirectory && !(_subFoldersOnly || _filesOnly))
+            {
+                Directory.Move(args[0] + Path.DirectorySeparatorChar + new DirectoryInfo(args[1]).Name, args[0] + Path.DirectorySeparatorChar + "Mods");
             }
         }
     }
@@ -76,6 +83,17 @@ public class Program
             if (arg == "--F")
             {
                 _filesOnly = true;
+            }
+        }
+    }
+
+    private static void ModsDirectory(string[] args)
+    {
+        foreach (var arg in args)
+        {
+            if (arg == "--M")
+            {
+                _modsDirectory = true;
             }
         }
     }
