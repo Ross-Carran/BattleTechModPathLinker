@@ -10,10 +10,7 @@ public class Program
     private static string[] _directoryPaths = new string[2];
     public static void Main(string[] args)
     {
-        FilesOnly(args);
-        SubFoldersOnly(args);
         DirectoryPaths(args);
-        ModsDirectory(args);
         if (_hasTwoArgs && !(_subFoldersOnly || _filesOnly))
         {
             Console.WriteLine("Directory 1 is: " + _directoryPaths[0]);
@@ -63,44 +60,12 @@ public class Program
         }
     }
 
-    private static void SubFoldersOnly(string[] args)
-    {
-        foreach (var arg in args)
-        {
-            if (arg == "--S")
-            {
-              _subFoldersOnly = true;
-            }
-        }
-    }
-
-    private static void FilesOnly(string[] args)
-    {
-        foreach (var arg in args)
-        {
-            if (arg == "--F")
-            {
-                _filesOnly = true;
-            }
-        }
-    }
-
-    private static void ModsDirectory(string[] args)
-    {
-        foreach (var arg in args)
-        {
-            if (arg == "--M")
-            {
-                _modsDirectory = true;
-            }
-        }
-    }
-
     private static void DirectoryPaths(string[] args)
     {
         int numFound = 0;
         foreach (var arg in args)
         {
+            CheckArgument(arg);
             if (Directory.Exists(arg) && _hasTwoArgs == false)
             {
                 _directoryPaths[numFound] = arg;
@@ -111,6 +76,22 @@ public class Program
             {
                 _hasTwoArgs = true;
             }
+        }
+    }
+
+    private static void CheckArgument(string arg)
+    {
+        switch (arg)
+        {
+            case "--S":
+                _subFoldersOnly = true;
+                break;
+            case "--M":
+                _modsDirectory = true;
+                break;
+            case "--F":
+                _filesOnly = true;
+                break;
         }
     }
 }
