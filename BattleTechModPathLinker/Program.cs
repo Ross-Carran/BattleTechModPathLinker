@@ -14,36 +14,32 @@ public class Program
         SubFoldersOnly(args);
         DirectoryPaths(args);
         ModsDirectory(args);
-        if (_hasTwoArgs && !(_subFoldersOnly && _filesOnly))
+        if (_hasTwoArgs && !(_subFoldersOnly || _filesOnly))
         {
             Console.WriteLine("Directory 1 is: " + _directoryPaths[0]);
             Console.WriteLine("Directory 2 is: " + _directoryPaths[1]);
-            if (_subFoldersOnly)
-            {
-                string[] BaseDir = Directory.GetDirectories(_directoryPaths[1]);
-                foreach (var dir in BaseDir)
-                {
-                    MakeDirectorySymbolicLinks(_directoryPaths[0],dir);  
-                }
-            }
-            else if (_filesOnly)
-            {
-                string[] BaseDir = Directory.GetFiles(_directoryPaths[1]);
-                foreach (var dir in BaseDir)
-                {
-                    MakeDirectorySymbolicLinks(_directoryPaths[0],dir);  
-                }
-            }
-            else
-            {
-                MakeDirectorySymbolicLinks(_directoryPaths[0],_directoryPaths[1]);
-            }
+            MakeDirectorySymbolicLinks(_directoryPaths[0],_directoryPaths[1]);
 
-            if (_modsDirectory && !(_subFoldersOnly || _filesOnly))
+            if (_modsDirectory)
             {
                 string dirName = "Mods";
-                Directory.Move(args[0] + Path.DirectorySeparatorChar + new DirectoryInfo(args[1]).Name,
-                    args[0] + Path.DirectorySeparatorChar + dirName);
+                Directory.Move(_directoryPaths[0] + Path.DirectorySeparatorChar + new DirectoryInfo(_directoryPaths[1]).Name,
+                    _directoryPaths[0] + Path.DirectorySeparatorChar + dirName);
+            }
+        }else if (_subFoldersOnly && !(_modsDirectory || _filesOnly))
+        {
+            string[] BaseDir = Directory.GetDirectories(_directoryPaths[1]);
+            foreach (var dir in BaseDir)
+            {
+                MakeDirectorySymbolicLinks(_directoryPaths[0],dir);  
+            }
+        }
+        else if (_filesOnly && !(_modsDirectory || _subFoldersOnly))
+        {
+            string[] BaseDir = Directory.GetFiles(_directoryPaths[1]);
+            foreach (var dir in BaseDir)
+            {
+                MakeDirectorySymbolicLinks(_directoryPaths[0],dir);  
             }
         }
     }
